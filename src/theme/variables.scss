@@ -35,13 +35,22 @@ $colors: (
 // App iOS Variables
 // --------------------------------------------------
 // iOS only Sass variables can go here
-
+$tabs-ios-background: #4040bc;
+$tabs-ios-tab-color-active: white;
+$tabs-ios-tab-color: rgba(100%, 100%, 100%, 0.4);
+$tabs-ios-border: #9c27b0;
+$toolbar-ios-background: #4040bc;
 
 
 
 // App Material Design Variables
 // --------------------------------------------------
 // Material Design only Sass variables can go here
+$tabs-md-background: #4040bc;
+$tabs-md-tab-color-active: white;
+$tabs-md-tab-color: rgba(100%, 100%, 100%, 0.4);
+$tabs-md-border: #9c27b0;
+$toolbar-md-background: #4040bc;
 
 
 
