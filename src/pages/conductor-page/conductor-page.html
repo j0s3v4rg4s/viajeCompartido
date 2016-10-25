@@ -5,15 +5,55 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
   <ion-navbar>
     <ion-title>Soy conductor</ion-title>
   </ion-navbar>
-
 </ion-header>
-
 
 <ion-content class="page-conductor-page">
   <div id="map"></div>
+  <div class="contenedor">
+    <div class="opciones">
+      <div class="row center-xs middle-xs cotflex">
+        <div class="col-xs-2">
+          <div class="cont-bol table">
+            <div class="row-table">
+              <div class="cell-table">
+                <span class="bol-mayor" [class.activate]="index==0"></span>
+              </div>
+            </div>
+            <div class="row-table">
+              <div class="cell-table">
+                <span class="bol-menor" [class.activate]="index==2"></span>
+              </div>
+            </div>
+            <div class="row-table">
+              <div class="cell-table">
+                <span class="bol-menor" [class.activate]="index==2"></span>
+              </div>
+            </div>
+						<div class="row-table">
+              <div class="cell-table">
+                <span class="bol-menor" [class.activate]="index==2"></span>
+              </div>
+            </div>
+            <div class="row-table">
+              <div class="cell-table">
+                <span class="bol-mayor " [class.activate]="index==1"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-9 start-xs">
+					<span class="text">{{info[index].texto}}</span>
+        </div>
+        <div class="col-xs-1">
+					 <ion-icon name="md-arrow-round-forward" class="flecha" id="flecha"></ion-icon>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
 </ion-content>

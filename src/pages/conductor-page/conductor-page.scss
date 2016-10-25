@@ -1,5 +1,71 @@
 page-conductor-page {
-    #map{
-        height: 100%;
+  #map {
+    height: 100%;
+  }
+  .contenedor {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  .opciones {
+    color: #4040bc;
+    width: 100%;
+    height: 45px;
+    -webkit-box-shadow: 0px 5px 9px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow: 0px 5px 9px 0px rgba(50, 50, 50, 0.75);
+    box-shadow: 0px 5px 9px 0px rgba(50, 50, 50, 0.75);
+    background-color: white;
+  }
+  .cont-bol {
+    height: 100%;
+    width: 100%;
+    span {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 2px;
+      margin-top: 2px;
     }
+    .bol-mayor {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    .bol-menor {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+     .activate {
+    background-color: #4040bc;
+  }
+  }
+ 
+  .table {
+    display: table;
+    .row-table {
+      display: table-row;
+    }
+    .cell-table {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center
+    }
+  }
+  .cotflex {
+    height: 100%;
+    width: 100%;
+  }
+  .flecha {
+    color: rgba(0, 0, 0, 0.3);
+  }
+  .flecha-activa {
+    color: #4040bc;
+  }
+  .text {
+    margin-left: -20px;
+    font-weight: 500;
+  }
 }

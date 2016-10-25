@@ -9,7 +9,10 @@ import { NavController } from 'ionic-angular';
 */
 
 declare var google: any;
-declare var statusMap: any
+declare var statusMap: any;
+var map;
+
+
 
 @Component({
   selector: 'page-conductor-page',
@@ -17,9 +20,25 @@ declare var statusMap: any
 })
 export class ConductorPage implements OnInit {
 
-  private map: any
 
-  constructor(public navCtrl: NavController) { }
+  private index: number
+  private info = []
+  private marketInit: any
+
+  constructor(public navCtrl: NavController) {
+    this.info = [
+      {
+        texto: 'Selecciona tu punto de partida'
+      },
+      {
+        texto: 'Selecciona tu punto de llegada'
+      },
+      {
+        texto: 'Ajusta tu ruta, Sitúa más puntos en el mapa'
+      },
+    ]
+    this.resetOpciones()
+  }
 
   ngOnInit() {
     let tiempo = window.setInterval(() => {
@@ -32,15 +51,37 @@ export class ConductorPage implements OnInit {
   }
 
   initMap() {
-    this.map = new google.maps.Map(document.getElementById('map'), {
-      center: { lat: 4.624335, lng: 	-74.063644},
-      mapTypeControl:false,
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 4.624335, lng: -74.063644 },
+      mapTypeControl: false,
       zoom: 8
+    });
+
+
+    google.maps.event.addListener(map, 'click', (event) => {
+      if (this.marketInit == null) {
+        this.marketInit = new google.maps.Marker({
+          position: event.latLng,
+          map: map
+        });
+        document.getElementById('flecha').classList.add('flecha-activa')
+      }
+
+      else
+        this.marketInit.setPosition(event.latLng)
     });
   }
 
+
+
+
   ionViewDidLoad() {
-    console.log('Hello ConductorPage Page');
+
+  }
+
+  resetOpciones() {
+    this.index = 0
+    this.marketInit == null
   }
 
 }

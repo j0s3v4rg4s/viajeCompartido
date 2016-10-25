@@ -28,7 +28,7 @@ export class Pasajero implements OnInit{
       }
     }, 500)
   }
-
+  
   initMap() {
     this.map = new google.maps.Map(document.getElementById('map2'), {
       center: { lat: 4.624335, lng: 	-74.063644},
@@ -38,7 +38,7 @@ export class Pasajero implements OnInit{
   }
 
   ionViewDidLoad() {
-    console.log('Hello Pasajero Page');
+    
   }
 
 }
