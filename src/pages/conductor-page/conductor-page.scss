@@ -2,6 +2,21 @@ page-conductor-page {
   #map {
     height: 100%;
   }
+
+  #aceptar{
+    .fab-ios,.fab-md{
+      background-color: #00d86b;
+    }
+  }
+  #cancelar{
+    .fab-ios,.fab-md{
+      background-color: #ff4040;
+    }
+  }
+
+  .noMostrar{
+    display: none;
+  }
   .contenedor {
     position: absolute;
     top: 0;
