@@ -20,13 +20,7 @@ export class Pasajero implements OnInit{
   constructor(public navCtrl: NavController) {}
 
   ngOnInit() {
-    let tiempo = window.setInterval(() => {
-      if (statusbar) {
-        window.clearInterval(tiempo)
-        console.log('map init complete');
-        this.initMap()
-      }
-    }, 500)
+   this.initMap()
   }
   
   initMap() {

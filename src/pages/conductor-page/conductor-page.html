@@ -5,55 +5,95 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-  <ion-navbar>
-    <ion-title>Soy conductor</ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>Soy conductor</ion-title>
+	</ion-navbar>
 </ion-header>
 
 <ion-content class="page-conductor-page">
-  <div id="map"></div>
-  <div class="contenedor">
-    <div class="opciones">
-      <div class="row center-xs middle-xs cotflex">
-        <div class="col-xs-2">
-          <div class="cont-bol table">
-            <div class="row-table">
-              <div class="cell-table">
-                <span class="bol-mayor" [class.activate]="index==0"></span>
-              </div>
-            </div>
-            <div class="row-table">
-              <div class="cell-table">
-                <span class="bol-menor" [class.activate]="index==2"></span>
-              </div>
-            </div>
-            <div class="row-table">
-              <div class="cell-table">
-                <span class="bol-menor" [class.activate]="index==2"></span>
-              </div>
-            </div>
+
+<ion-fab right bottom #fab>
+    <button ion-fab ><ion-icon name="arrow-dropup"></ion-icon></button>
+    <ion-fab-list side="top">
+      <button ion-fab (click)="Clocefab(fab)"><ion-icon name="refresh"></ion-icon></button>
+      <button ion-fab (click)="Clocefab(fab)"><ion-icon name="ios-pin"></ion-icon></button>
+      
+    </ion-fab-list>
+  </ion-fab>
+
+	<div id="map"></div>
+	<div class="contenedor" [class.expanded1]="estadoActual==1" [class.expanded2]="estadoActual==2">
+		<!--panel de aceptacion punto final-->
+		<div class="verde movable" style="z-index: 4">
+			<div class="row center-xs middle-xs">
+				<div class="col-xs-2 npading">
+					<ion-icon name="md-checkmark"></ion-icon>
+				</div>
+				<div class="col-xs-7 npading start-xs">
+					<span class="text-verde">Punto de llegada seleccionado</span>
+				</div>
+				<div class="col-xs-3 npading">
+					Editar
+				</div>
+			</div>
+		</div>
+		<!--panel de aceptacio punto inicial-->
+		<div class="verde " style="z-index: 2">
+			<div class="row center-xs middle-xs">
+				<div class="col-xs-2 npading">
+					<ion-icon name="md-checkmark"></ion-icon>
+				</div>
+				<div class="col-xs-7 npading start-xs">
+					<span class="text-verde">Punto de partida seleccionado</span>
+				</div>
+				<div class="col-xs-3 npading">
+					Editar
+				</div>
+			</div>
+		</div>
+		<!--panel de opciones-->
+		<div class="opciones ">
+			<div class="row center-xs middle-xs cotflex">
+				<div class="col-xs-2">
+					<div class="cont-bol table">
 						<div class="row-table">
-              <div class="cell-table">
-                <span class="bol-menor" [class.activate]="index==2"></span>
-              </div>
-            </div>
-            <div class="row-table">
-              <div class="cell-table">
-                <span class="bol-mayor " [class.activate]="index==1"></span>
-              </div>
-            </div>
-          </div>
-        </div>
+							<div class="cell-table">
+								<span class="bol-mayor" [class.activate]="estadoActual==0"></span>
+							</div>
+						</div>
+						<div class="row-table">
+							<div class="cell-table">
+								<span class="bol-menor" [class.activate]="estadoActual==2"></span>
+							</div>
+						</div>
+						<div class="row-table">
+							<div class="cell-table">
+								<span class="bol-menor" [class.activate]="estadoActual==2"></span>
+							</div>
+						</div>
+						<div class="row-table">
+							<div class="cell-table">
+								<span class="bol-menor" [class.activate]="estadoActual==2"></span>
+							</div>
+						</div>
+						<div class="row-table">
+							<div class="cell-table">
+								<span class="bol-mayor " [class.activate]="estadoActual==1"></span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        <div class="col-xs-9 start-xs">
-					<span class="text">{{info[index].texto}}</span>
-        </div>
-        <div class="col-xs-1">
-					 <ion-icon name="md-arrow-round-forward" class="flecha" id="flecha"></ion-icon>
-        </div>
-      </div>
+				<div class="col-xs-9 start-xs">
+					<span class="text">{{info[estadoActual].texto}}</span>
+					<span (click)="infoStep()">(?)</span>
+				</div>
+				<div class="col-xs-1" (click)="cabiarEstado()">
+					<ion-icon name="md-arrow-round-forward" class="flecha" id="flecha"></ion-icon>
+				</div>
+			</div>
 
-    </div>
-  </div>
+		</div>
+	</div>
 
 </ion-content>

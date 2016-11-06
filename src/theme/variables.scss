@@ -1,6 +1,9 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/v2/theming/
 @import "ionic.globals";
+ion-fab[bottom][edge] {
+  bottom: 0px;
+}
 
 
 // Shared Variables
@@ -40,6 +43,8 @@ $tabs-ios-tab-color-active: white;
 $tabs-ios-tab-color: rgba(100%, 100%, 100%, 0.4);
 $tabs-ios-border: #9c27b0;
 $toolbar-ios-background: #4040bc;
+$fab-ios-background-color: #FF4081;
+$fab-ios-in-list-background-color: #FF4081;
 
 
 
@@ -51,6 +56,8 @@ $tabs-md-tab-color-active: white;
 $tabs-md-tab-color: rgba(100%, 100%, 100%, 0.4);
 $tabs-md-border: #9c27b0;
 $toolbar-md-background: #4040bc;
+$fab-md-background-color: #FF4081;
+$fab-md-in-list-background-color: #FF4081;
 
 
 
