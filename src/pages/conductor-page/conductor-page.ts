@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, FabContainer } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
+import { Back } from '../../providers/back';
+
+import _ from 'underscore';
+declare var firebase: any;
+
 /*
   Generated class for the ConductorPage page.
 
@@ -17,7 +22,8 @@ var map;
 
 @Component({
   selector: 'page-conductor-page',
-  templateUrl: 'conductor-page.html'
+  templateUrl: 'conductor-page.html',
+  providers: [Back]
 })
 export class ConductorPage implements OnInit {
 
@@ -34,14 +40,18 @@ export class ConductorPage implements OnInit {
   midleActual: any
   waypts = []
   bloqueado = false
+  request: any
+  fecha: any;
 
 
   constructor(
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public back: Back
   ) {
-
+    this.estadoActual = 0
+    this.fecha = "13:00"
     this.info = [
       {
         texto: 'Selecciona tu punto de partida'
@@ -52,9 +62,14 @@ export class ConductorPage implements OnInit {
       {
         texto: 'Ajusta tu ruta'
       },
+      {
+        texto: 'Ajusta tu ruta'
+      },
     ]
     this.resetOpciones()
   }
+
+
 
   ngOnInit() {
     this.initMap()
@@ -93,6 +108,10 @@ export class ConductorPage implements OnInit {
       this.stepAlgoritmo()
     }
     else if (this.marketEnd && this.estadoActual == 1) {
+      this.estadoActual = this.estadoActual + 1
+      this.stepAlgoritmo()
+    }
+    else {
       this.estadoActual = this.estadoActual + 1
       this.stepAlgoritmo()
     }
@@ -164,6 +183,33 @@ export class ConductorPage implements OnInit {
         this.renderRuta()
         this.addMidlePoint()
         break;
+
+      case 4:
+        let pat = this.request.routes[0].overview_path
+        let anterior
+        _.each(pat, (e, k) => {
+          if (anterior == null) {
+            let ma = new google.maps.Marker({
+              position: new google.maps.LatLng(e.lat(), e.lng()),
+              label: '' + k,
+              map: map
+            })
+            anterior = ma
+          }
+          else {
+            let dis = this.back.getDistanceFromLatLonInKm(anterior.getPosition().lat(), anterior.getPosition().lng(), e.lat(), e.lng()) * 1000
+            if (dis > 500) {
+              let ma = new google.maps.Marker({
+                position: new google.maps.LatLng(e.lat(), e.lng()),
+                label: '' + k,
+                map: map
+              })
+              anterior = ma
+            }
+          }
+
+        })
+        break;
       default:
         break;
     }
@@ -175,14 +221,15 @@ export class ConductorPage implements OnInit {
       destination: this.marketEnd.getPosition(),
       travelMode: google.maps.TravelMode.DRIVING,
       waypoints: this.waypts,
-      optimizeWaypoints:true
+      optimizeWaypoints: true
     }
     this.directionsService.route(option, (response, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
+        this.request = response
         this.directionsDisplay.setDirections(response)
         let legg = response.routes[0].legs
         this.marketInit.setPosition(response.routes[0].legs[0].start_location)
-        this.marketEnd.setPosition(response.routes[0].legs[legg.length-1].end_location)
+        this.marketEnd.setPosition(response.routes[0].legs[legg.length - 1].end_location)
       }
     })
   }
@@ -195,7 +242,6 @@ export class ConductorPage implements OnInit {
         this.puntosIntermedios[this.numPunIntermedios] = new google.maps.Marker({
           position: event.latLng,
           map: map,
-          label: '' + (this.numPunIntermedios + 1)
         });
       }
       else
@@ -211,7 +257,7 @@ export class ConductorPage implements OnInit {
     if (this.estadoActual == 2) {
       google.maps.event.clearListeners(map, 'click');
     }
-    
+
     if (this.estadoAnterior == null && this.bloqueado == false) {
       this.bloqueado = true
       this.marketInit.setAnimation(google.maps.Animation.BOUNCE)
@@ -247,7 +293,7 @@ export class ConductorPage implements OnInit {
    * @memberOf ConductorPage
    */
   cambiarFinal() {
-     if (this.estadoActual == 2) {
+    if (this.estadoActual == 2) {
       google.maps.event.clearListeners(map, 'click');
     }
     if (this.estadoAnterior == null && this.bloqueado == false) {
@@ -281,28 +327,37 @@ export class ConductorPage implements OnInit {
   }
 
   saveMini() {
-    document.getElementById('opciones').classList.toggle('noMostrar')
-    document.getElementById('aceptar').classList.toggle('noMostrar')
-    document.getElementById('cancelar').classList.toggle('noMostrar')
-
-
+    this.mostrarBotones()
     if (this.midleActual == null) {
       var marker = this.puntosIntermedios[this.numPunIntermedios]
       marker.addListener('click', () => {
-        if(this.midleActual == null && this.bloqueado == false){
+        google.maps.event.clearListeners(map, 'click');
+        if (this.midleActual == null && this.bloqueado == false) {
           this.bloqueado = true
           this.midleActual = marker
           this.midleActual.setAnimation(google.maps.Animation.BOUNCE);
           this.midleActual.setDraggable(true)
           this.mostrarBotones()
-        }  
-        else{
+
+          marker.addListener('dragend', () => {
+            this.waypts = []
+            _.each(this.puntosIntermedios, (e, k, l) => {
+              this.waypts.push({
+                location: e.getPosition(),
+                stopover: true
+              });
+            })
+            this.renderRuta()
+
+          })
+        }
+        else {
           let alert = this.alertCtrl.create({
-        title: 'Accion no permitida',
-        subTitle: 'Debes primero guardar el punto antes de continuar',
-        buttons: ['OK']
-      });
-      alert.present();
+            title: 'Accion no permitida',
+            subTitle: 'Debes primero guardar el punto antes de continuar',
+            buttons: ['OK']
+          });
+          alert.present();
         }
       });
       this.numPunIntermedios++
@@ -311,16 +366,17 @@ export class ConductorPage implements OnInit {
         stopover: true
       });
       this.renderRuta()
-      
+
     }
     else {
+      this.addMidlePoint()
       this.waypts = []
-      for(let i=0;i<this.puntosIntermedios.length;i++){
+      _.each(this.puntosIntermedios, (e, k, l) => {
         this.waypts.push({
-        location:this.puntosIntermedios[i].getPosition(),
-        stopover: true
-      });
-      }
+          location: e.getPosition(),
+          stopover: true
+        });
+      })
       this.midleActual.setDraggable(false)
       this.midleActual.setAnimation(null);
       this.midleActual = null
@@ -330,8 +386,33 @@ export class ConductorPage implements OnInit {
 
   }
 
-  removeMini(){
-    
+  removeMini() {
+    this.bloqueado = false
+    let temp
+    if (this.midleActual) {
+      temp = this.midleActual
+      this.puntosIntermedios = _.without(this.puntosIntermedios, temp)
+      this.numPunIntermedios = this.puntosIntermedios.length
+      this.waypts = []
+      _.each(this.puntosIntermedios, (e, k, l) => {
+        this.waypts.push({
+          location: e.getPosition(),
+          stopover: true
+        });
+      })
+      this.midleActual.setDraggable(false)
+      this.midleActual.setAnimation(null);
+      this.midleActual = null
+      this.renderRuta()
+    }
+    else {
+      temp = this.puntosIntermedios[this.numPunIntermedios]
+      this.puntosIntermedios = _.without(this.puntosIntermedios, temp)
+      this.numPunIntermedios = this.puntosIntermedios.length
+
+    }
+    temp.setMap(null)
+    this.mostrarBotones()
   }
 
   mostrarBotones() {
