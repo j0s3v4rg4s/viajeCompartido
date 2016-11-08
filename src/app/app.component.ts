@@ -29,7 +29,7 @@ export class MyApp {
         };
         firebase.initializeApp(config);
       })
-      this.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB_H8PBZ5AIGo5rXIAgg1JEQ-8YQ5y1hBg', () => {
+      this.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB_H8PBZ5AIGo5rXIAgg1JEQ-8YQ5y1hBg&libraries=places', () => {
         this.rootPage = TabsPage
       })
     });

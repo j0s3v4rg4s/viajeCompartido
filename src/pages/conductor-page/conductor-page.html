@@ -17,7 +17,7 @@
     <div class="cuadro">
       <div class="header row center-xs middle-xs">
         <div class="col-xs-2">
-          <ion-icon name="md-arrow-round-back" (click)="estadoActual=2"></ion-icon>
+          <ion-icon name="md-arrow-round-back" (click)="estadoActual=2;vcupo=false"></ion-icon>
         </div>
         <div class="col-xs-8">
           <p style="margin:0">!Está casi listo!</p>
@@ -27,9 +27,10 @@
         </div>
       </div>
       <div class="cuerpo">
+        <span style="color:red;margin-bottom: 7px;display: block;" *ngIf="vcupo">Los cupos debe ser mayor a 0</span>
         <div class="parte">
           <p class="titulo">Descripción de la ruta</p>
-          <textarea rows="" cols="" placeholder="Salgo por la ..."></textarea>
+          <textarea rows="" cols="" placeholder="Salgo por la ..." [(ngModel)]="descripcion"></textarea>
         </div>
         <div class="parte row">
           <div class="col-xs-7">
@@ -37,7 +38,7 @@
           </div>
           <div class="col-xs-5" style="position: relative; padding-right: 0;">
             <span class="pesos">$</span>
-            <input type="number" name="" value="" placeholder="0" class="inp">
+            <input type="number" name="" value="" placeholder="0" class="inp" [(ngModel)]="precio">
           </div>
         </div>
         <div class="parte row">
@@ -45,7 +46,7 @@
             <span class="titulo">Cupos</span>
           </div>
           <div class="col-xs-5" style="position: relative; padding-right: 0;">
-            <input type="number" name="" value="" placeholder="0" class="inp" style="padding:0">
+            <input type="number" name="" value="" placeholder="0" class="inp" style="padding:0" [(ngModel)]="cupos">
           </div>
         </div>
         <div class="parte row">
@@ -56,7 +57,7 @@
             <ion-datetime style="padding: 0;" displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="fecha"></ion-datetime>
           </div>
         </div>
-        <button ion-button full color="secondary">Guardar ruta</button>
+        <button ion-button full color="secondary" (click)="validar()">Guardar ruta</button>
       </div>
     </div>
   </div>

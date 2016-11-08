@@ -3,6 +3,7 @@ import { NavController, FabContainer } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Back } from '../../providers/back';
+import { PuntoDetalleService } from '../../providers/punto-detalle';
 
 import _ from 'underscore';
 declare var firebase: any;
@@ -23,7 +24,7 @@ var map;
 @Component({
   selector: 'page-conductor-page',
   templateUrl: 'conductor-page.html',
-  providers: [Back]
+  providers: [Back, PuntoDetalleService]
 })
 export class ConductorPage implements OnInit {
 
@@ -41,17 +42,23 @@ export class ConductorPage implements OnInit {
   waypts = []
   bloqueado = false
   request: any
-  fecha: any;
+  vcupo = false
 
+  fecha: any
+  descripcion: string
+  precio: number
+  cupos: number
 
   constructor(
     public navCtrl: NavController,
     public toastCtrl: ToastController,
     public alertCtrl: AlertController,
-    public back: Back
+    public back: Back,
+    public puntoService: PuntoDetalleService
   ) {
     this.estadoActual = 0
     this.fecha = "13:00"
+
     this.info = [
       {
         texto: 'Selecciona tu punto de partida'
@@ -182,33 +189,6 @@ export class ConductorPage implements OnInit {
         google.maps.event.clearListeners(map, 'click');
         this.renderRuta()
         this.addMidlePoint()
-        break;
-
-      case 4:
-        let pat = this.request.routes[0].overview_path
-        let anterior
-        _.each(pat, (e, k) => {
-          if (anterior == null) {
-            let ma = new google.maps.Marker({
-              position: new google.maps.LatLng(e.lat(), e.lng()),
-              label: '' + k,
-              map: map
-            })
-            anterior = ma
-          }
-          else {
-            let dis = this.back.getDistanceFromLatLonInKm(anterior.getPosition().lat(), anterior.getPosition().lng(), e.lat(), e.lng()) * 1000
-            if (dis > 500) {
-              let ma = new google.maps.Marker({
-                position: new google.maps.LatLng(e.lat(), e.lng()),
-                label: '' + k,
-                map: map
-              })
-              anterior = ma
-            }
-          }
-
-        })
         break;
       default:
         break;
@@ -419,6 +399,66 @@ export class ConductorPage implements OnInit {
     document.getElementById('opciones').classList.toggle('noMostrar')
     document.getElementById('aceptar').classList.toggle('noMostrar')
     document.getElementById('cancelar').classList.toggle('noMostrar')
+  }
+
+  validar() {
+    this.vcupo = false
+    if (this.cupos == 0 || this.cupos == null)
+      this.vcupo = true
+    else
+      this.terminar()
+  }
+
+  terminar() {
+    let pat = this.request.routes[0].overview_path
+    let anterior
+    let geocoder = new google.maps.Geocoder();
+
+    let ruta = {
+      precio: (this.precio == null) ? 0 : this.precio,
+      descripcion: (this.descripcion == null) ? "" : this.descripcion,
+      cupos: this.cupos,
+      fecha: this.fecha
+    }
+    let key = firebase.database().ref('rutas/').push(ruta)
+    _.each(pat, (e, k) => {
+      if (anterior == null) {
+        anterior = {
+          lat: e.lat(),
+          lng: e.lng()
+        }
+        geocoder.geocode({ 'location': new google.maps.LatLng(anterior.lat, anterior.lng) }, (result, status) => {
+          if (status === google.maps.GeocoderStatus.OK) {
+            this.puntoService.getMap(result[0].address_components).then(punto => {
+              punto['cordenada'] = anterior
+              punto['ruta'] = key.path.o[1]
+              firebase.database().ref('puntos/').push(punto)
+            })
+
+          }
+        })
+      }
+      else {
+        let dis = this.back.getDistanceFromLatLonInKm(anterior.lat, anterior.lng, e.lat(), e.lng()) * 1000
+        if (dis > 500) {
+          anterior = {
+            lat: e.lat(),
+            lng: e.lng()
+          }
+          geocoder.geocode({ 'location': new google.maps.LatLng(anterior.lat, anterior.lng) }, (result, status) => {
+            if (status === google.maps.GeocoderStatus.OK) {
+              this.puntoService.getMap(result[0].address_components).then(punto => {
+                punto['cordenada'] = anterior
+                punto['ruta'] = key.path.o[1]
+                firebase.database().ref('puntos/').push(punto)
+              })
+
+            }
+          })
+        }
+      }
+
+    })
   }
 
 }
