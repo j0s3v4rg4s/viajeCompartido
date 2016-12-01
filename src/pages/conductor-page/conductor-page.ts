@@ -4,6 +4,7 @@ import { ToastController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Back } from '../../providers/back';
 import { PuntoDetalleService } from '../../providers/punto-detalle';
+import { Geolocation } from 'ionic-native';
 
 import _ from 'underscore';
 declare var firebase: any;
@@ -49,6 +50,19 @@ export class ConductorPage implements OnInit {
   precio: number
   cupos: number
 
+  watch: any
+
+  /**
+   * Creates an instance of ConductorPage.
+   * 
+   * @param {NavController} navCtrl
+   * @param {ToastController} toastCtrl
+   * @param {AlertController} alertCtrl
+   * @param {Back} back
+   * @param {PuntoDetalleService} puntoService
+   * 
+   * @memberOf ConductorPage
+   */
   constructor(
     public navCtrl: NavController,
     public toastCtrl: ToastController,
@@ -80,8 +94,21 @@ export class ConductorPage implements OnInit {
 
   ngOnInit() {
     this.initMap()
+    this.watch = Geolocation.watchPosition();
+    this.watch.subscribe((data) => {
+      // data can be a set of coordinates, or an error (if an error occurred).
+      // data.coords.latitude
+      // data.coords.longitude
+    });
+    navigator.geolocation.clearWatch(this.watch);
   }
 
+  /**
+   * Inicia el mapa 
+   * 
+   * 
+   * @memberOf ConductorPage
+   */
   initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
       center: { lat: 4.624335, lng: -74.063644 },
