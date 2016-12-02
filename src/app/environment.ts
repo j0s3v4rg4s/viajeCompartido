@@ -1,5 +1,5 @@
 export const environment = {
-	production: false,
+	production: true,
 	config: {
 		apiKey: "AIzaSyDCj0Cim15TsLNHCXghpzUdx0574h9vygg",
 		authDomain: "trepsi-prod.firebaseapp.com",
